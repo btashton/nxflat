@@ -33,9 +33,8 @@
 #
 ############################################################################
 
-CFLAGS		+= -Wall -I. -I$(BINUTILS_DIR1)/bfd -I$(BINUTILS_DIR)/include
-LDFLAGS		+= -L$(BINUTILS_DIR1)/bfd -L$(BINUTILS_DIR1)/libiberty
-LIBS		= -lbfd -liberty -lz -lc -ldl
+CFLAGS		+= -Wall -I.
+LIBS		= -lbfd
 
 LDNXFLAT_OBJS	= ldnxflat.o
 MKNXFLAT_OBJS	= mknxflat.o
@@ -45,6 +44,8 @@ OBJS		= $(LDNXFLAT_OBJS) $(MKNXFLAT_OBJS) $(READNXFLAT_OBJS)
 BIN		= ldnxflat mknxflat readnxflat
 
 GXX_VERSION	= ${shell $(ARCHCXX) -dumpversion | cut -d. -f1}
+
+ARCH            ?= thumb2
 
 all:	$(BIN)
 

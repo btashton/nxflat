@@ -1,0 +1,25 @@
+name: Build
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        arch: [arm, thumb2]
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: build requirements
+      run: sudo apt-get install -y binutils-dev
+    - name: make
+      run: ARCH=${{ matrix.arch }} make
+    - name: smoketest
+      run: ./ldnxflat || ./mknxflat || ./readnxflat || true
+    - name: clean
+      run: make clean

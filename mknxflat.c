@@ -43,8 +43,6 @@
  * Included Files
  ***********************************************************************/
 
-#include "config.h"
-
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -54,7 +52,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#include "bfd.h"
+#include <bfd.h>
 
 #include "nxflat.h"
 #include "arch/arch.h"
