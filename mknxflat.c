@@ -126,9 +126,6 @@ static int counter;
 
 #include "arch/dyncall_skeleton.def"
 
-static const char dyn_symbol_prefix[] = "__dyn";
-#define DYN_SYMBOL_PREFIX_LEN 5
-
 /* This is the list of names of libc and libpthread functions that
  * do not return.  These may require some special handling -- at a
  * minimum, they must tie up resources that can only be released

@@ -16,10 +16,16 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: build requirements
-      run: sudo apt-get install -y binutils-dev
+      run: sudo apt-get install -y binutils-multiarch-dev=2.34-*
     - name: make
-      run: ARCH=${{ matrix.arch }} make
+      run: ARCH=${{ matrix.arch }} LIBBFD=lbfd-2.34-multiarch make
     - name: smoketest
       run: ./ldnxflat || ./mknxflat || ./readnxflat || true
+    - name: test with data
+      if: ${{ matrix.arch == 'thumb2' }}
+      run: |
+        ./mknxflat -o hello-thunk.S test-data/thumb/hello.r1
+        ./ldnxflat -e main -s 2048 -o hello test-data/thumb/hello.r2
+        ./readnxflat -a hello
     - name: clean
       run: make clean

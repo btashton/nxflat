@@ -34,7 +34,9 @@
 ############################################################################
 
 CFLAGS		+= -Wall -I.
-LIBS		= -lbfd
+CFLAGS		+= -DPACKAGE=1 -DPACKAGE_VERSION=1
+LIBBFD		?= lbfd
+LIBS		= -$(LIBBFD)
 
 LDNXFLAT_OBJS	= ldnxflat.o
 MKNXFLAT_OBJS	= mknxflat.o
