@@ -84,6 +84,11 @@ jobs:
       uses: msys2/setup-msys2@v2
       with:
         install: wget tar texinfo diffutils make libtool mingw-w64-x86_64-toolchain mingw-w64-x86_64-libzip 
+    - name: Find header
+      working-directory: ${{ github.workspace }}
+      run: |
+        find /mingw64/ -name endian.h
+        which cc
     - name: Prepair Sources
       working-directory: ${{ github.workspace }}
       run: |
