@@ -145,20 +145,40 @@
 #define NXFLAT_RELOC_TARGET_BSS     3
 #define NXFLAT_RELOC_TARGET_UNKNOWN 4
 
+
+/* Needs to match definition in include/elf/arm.h.  This is from binutils-2.36 */
+
+#define NUM_ENUM_ARM_ST_BRANCH_TYPE_BITS 2
+#define ENUM_ARM_ST_BRANCH_TYPE_BITMASK \
+  ((1 << NUM_ENUM_ARM_ST_BRANCH_TYPE_BITS) - 1)
+
+#define ARM_GET_SYM_BRANCH_TYPE(STI) \
+  ((enum arm_st_branch_type) ((STI) & ENUM_ARM_ST_BRANCH_TYPE_BITMASK))
+
 /***********************************************************************
  * Private Types
  ***********************************************************************/
 
-/* Needs to match definition in include/elf/internal.h.  This is from binutils-2.19.1 */
+/* Needs to match definition in include/elf/internal.h.  This is from binutils-2.36 */
 
-struct elf_internal_sym
-{
-  bfd_vma       st_value;            /* Value of the symbol */
-  bfd_vma       st_size;             /* Associated symbol size */
-  unsigned long st_name;             /* Symbol name, index in string tbl */
-  unsigned char st_info;             /* Type and binding attributes */
-  unsigned char st_other;            /* Visibilty, and target specific */
-  unsigned int  st_shndx;            /* Associated section index */
+struct elf_internal_sym {
+  bfd_vma       st_value;               /* Value of the symbol */
+  bfd_vma       st_size;                /* Associated symbol size */
+  unsigned long st_name;                /* Symbol name, index in string tbl */
+  unsigned char st_info;                /* Type and binding attributes */
+  unsigned char st_other;               /* Visibilty, and target specific */
+  unsigned char st_target_internal;     /* Internal-only information */
+  unsigned int  st_shndx;               /* Associated section index */
+};
+
+/* Needs to match definition in include/elf/arm.h.  This is from binutils-2.36 */
+
+enum arm_st_branch_type {
+  ST_BRANCH_TO_ARM,
+  ST_BRANCH_TO_THUMB,
+  ST_BRANCH_LONG,
+  ST_BRANCH_UNKNOWN,
+  ST_BRANCH_ENUM_SIZE
 };
 
 typedef struct
@@ -1054,7 +1074,7 @@ resolve_segment_relocs(bfd *input_bfd, segment_info *inf, asymbol **syms)
 
           sym_value = rel_sym->value;
 #ifdef NXFLAT_THUMB2
-          if ((((elf_symbol_type *)rel_sym)->internal_elf_sym.st_info & 0x0f) == STT_ARM_TFUNC)
+          if (ARM_GET_SYM_BRANCH_TYPE (((elf_symbol_type *)rel_sym)->internal_elf_sym.st_target_internal) == ST_BRANCH_TO_THUMB)
             {
                sym_value |= 1;
             }
@@ -1535,7 +1555,8 @@ static void dump_symbol(asymbol * psym)
   /* Tag thumb specific attributes */
 
 #ifdef NXFLAT_THUMB2
-  if ((isym->st_info & 0x0f) == STT_ARM_TFUNC || (isym->st_info & 0x0f) == STT_ARM_16BIT)
+  if((ARM_GET_SYM_BRANCH_TYPE (isym->st_target_internal) == ST_BRANCH_TO_THUMB) ||
+     ((isym->st_info & 0x0f) == STT_ARM_16BIT))
     {
       putchar('T');
     }
@@ -1942,7 +1963,7 @@ static void output_got(int fd)
           /* If the symbol is a thumb function, then set bit 1 of the value */
 
 #ifdef NXFLAT_THUMB2
-          if ((((elf_symbol_type *)rel_sym)->internal_elf_sym.st_info & 0x0f) == STT_ARM_TFUNC)
+          if (ARM_GET_SYM_BRANCH_TYPE (((elf_symbol_type *)rel_sym)->internal_elf_sym.st_target_internal) == ST_BRANCH_TO_THUMB)
             {
                sym_value |= 1;
             }
