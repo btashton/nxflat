@@ -83,7 +83,7 @@ jobs:
     - name: build requirements
       uses: msys2/setup-msys2@v2
       with:
-        install: wget tar texinfo diffutils make libtool msys2-runtime-devel mingw-w64-x86_64-toolchain mingw-w64-x86_64-libzip 
+        install: wget tar texinfo diffutils make libtool mingw-w64-x86_64-toolchain mingw-w64-x86_64-libzip 
     - name: Prepair Sources
       working-directory: ${{ github.workspace }}
       run: |
