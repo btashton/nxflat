@@ -74,7 +74,7 @@
 #include <errno.h>
 
 #include <sys/types.h>
-#include <endian.h>
+#include <netinet/in.h>
 
 #include <bfd.h>
 
@@ -296,7 +296,7 @@ static inline u_int32_t nxflat_swap32(u_int32_t little)
 
 static inline u_int32_t get_xflat32(u_int32_t * addr32)
 {
-  return be32toh(*addr32);
+  return ntohl(*addr32);
 }
 
 /***********************************************************************
@@ -305,7 +305,7 @@ static inline u_int32_t get_xflat32(u_int32_t * addr32)
 
 static void inline put_xflat32(u_int32_t * addr32, u_int32_t val32)
 {
-  *addr32 = htobe32(val32);
+  *addr32 = htonl(val32);
 }
 
 /***********************************************************************
@@ -315,7 +315,7 @@ static void inline put_xflat32(u_int32_t * addr32, u_int32_t val32)
 static void inline put_xflat16(u_int16_t * addr16, u_int16_t val16)
 {
 #if 1
-  *addr16 = htobe16(val16);
+  *addr16 = htons(val16);
 #else
   u_int32_t *addr32 = (u_int32_t *) (((u_int32_t) addr16) & ~3);
   u_int32_t ndx = ((((u_int32_t) addr16) >> 1) & 1);
@@ -2528,7 +2528,7 @@ int main(int argc, char **argv, char **envp)
 #ifdef RELOCS_IN_NETWORK_ORDER
       for (i = 0; i < nxflat_nrelocs; i++)
         {
-          nxflat_relocs[i] = htobe32(nxflat_relocs[i]);
+          nxflat_relocs[i] = htonl(nxflat_relocs[i]);
         }
 #endif
       nxflat_write(fd, (const char *)nxflat_relocs, sizeof(struct nxflat_reloc_s) * nxflat_nrelocs);

@@ -87,8 +87,7 @@ jobs:
     - name: Find header
       working-directory: ${{ github.workspace }}
       run: |
-        find /mingw64/ -name endian.h
-        which cc
+        find /mingw64/ -name Winsock2.h
     - name: Prepair Sources
       working-directory: ${{ github.workspace }}
       run: |
